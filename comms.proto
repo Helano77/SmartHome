@@ -1,13 +1,11 @@
 syntax = "proto3";
 
 service SmartHomeService{
-    rpc Command (sendCommandToDevice) {}
-    rpc Receive (receiveResponse) {}
+    rpc Command (sendCommandToDevice) returns (receiveResponse) {}
 }
 
 message sendCommandToDevice{
     string command = 1;
-    string device = 2;
 }
 
 message receiveResponse{
