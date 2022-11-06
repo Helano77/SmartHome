@@ -10,7 +10,7 @@ ambient_temperature = 26
 current_temperature = ambient_temperature
 temporary_temperature = ambient_temperature
 class Ar_Condicionado():
-    def __init_(self):
+    def __init__(self):
         self.temp = 26
         self.status = False
     
@@ -53,14 +53,17 @@ class SmartHomeServiceActuator(SmartHomeServiceServicer):
     def Command(self, request, context):
         if(request.command.split()[0] == 'set_temperature'):
             if(int(request.command.split()[1]) >= 16 and int(request.command.split()[1]) <= 30):
-                self.ac.set_temperature(int(request.command.split()[1]))
-                return receiveResponse(response = f'Temperatura do ar-condicionado: {int(request.command.split()[1])}')
-        
+                if(self.ac.status == True):
+                    self.ac.set_temperature(int(request.command.split()[1]))
+                    return receiveResponse(response = f'Temperatura do ar-condicionado: {int(request.command.split()[1])}')
+                else:
+                    return receiveResponse(response = f'Para mudar a temperatura, ligue primeiro o Ar-condicionado.')    
         elif(request.command.split()[0] == 'set_status'):
-            self.ac.set_status(request.command.split()[1])
-            if(request.command.split()[1] == True):
+            if(request.command.split()[1].upper() == 'TRUE'):
+                self.ac.set_status(True)
                 return receiveResponse(response = "Ar condicionado Ligado!")
             else:
+                self.ac.set_status(False)
                 return receiveResponse(response = "Ar condicionado Desligado!")    
 
         else:

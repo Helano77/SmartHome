@@ -8,16 +8,22 @@ from comms_pb2 import sendCommandToDevice, receiveResponse
 from comms_pb2_grpc import SmartHomeServiceServicer,add_SmartHomeServiceServicer_to_server
 
 smoke = False
+ics_on = False
 
 class incendiary_control_system():
-    def __init_(self):
+    def __init__(self):
         self.status = False
     
     def set_status(self,tf):
         global smoke
+        global ics_on
         if tf == True:
-            self.status = tf
+            self.status = True
+            ics_on = True
             smoke = False
+        else:
+            self.status = False
+            ics_on = False
 
 def smoke_sensor():
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -26,9 +32,10 @@ def smoke_sensor():
     
     while True:
         global smoke
+        global ics_on
         sleep(5)
         probability_smoke = randint(0,101)
-        if(probability_smoke > 70):
+        if(probability_smoke > 70 and ics_on == False):
             smoke = True
         
         if(smoke):

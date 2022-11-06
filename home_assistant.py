@@ -36,7 +36,6 @@ def receive_commands():
         con, addr = sock.accept()
         while True:
             comando = con.recv(1024).decode('utf-8')
-            print(f'Comando recebido: {comando}')
             if(comando.split()[2] == 'AC'):            
                 smart_home_service_channel = grpc.insecure_channel('localhost:8000')
                 smart_home_service_actuator = SmartHomeServiceStub(smart_home_service_channel)
@@ -46,6 +45,13 @@ def receive_commands():
                 print(response.response)
             elif(comando.split()[2] == 'ICS'):
                 smart_home_service_channel = grpc.insecure_channel('localhost:8080')
+                smart_home_service_actuator = SmartHomeServiceStub(smart_home_service_channel)
+                comando = comando.split()[0] + " " + comando.split()[1]
+                send_command = sendCommandToDevice(command = comando)
+                response = smart_home_service_actuator.Command(send_command)
+                print(response.response)
+            elif(comando.split()[2] == 'UCS'):
+                smart_home_service_channel = grpc.insecure_channel('localhost:8050')
                 smart_home_service_actuator = SmartHomeServiceStub(smart_home_service_channel)
                 comando = comando.split()[0] + " " + comando.split()[1]
                 send_command = sendCommandToDevice(command = comando)
